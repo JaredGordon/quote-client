@@ -1,0 +1,17 @@
+package cf.pivotal.quoteClient;
+
+import org.springframework.cloud.config.java.AbstractCloudConfig;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+@Configuration
+@Profile({ "cloud" })
+public class CloudConfig extends AbstractCloudConfig {
+
+	@Bean
+	public QuoteRepository quoteRepository() {
+		return connectionFactory().service(QuoteRepository.class);
+	}
+
+}
