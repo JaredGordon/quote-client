@@ -5,16 +5,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import cf.pivotal.quoteClient.QuoteRepository;
-import cf.pivotal.quoteClient.QuoteRepositoryFactory;
+import cf.pivotal.quoteClient.QuoteRepositoryConnectionCreator;
 
 @Configuration
-@Profile({"default", "test", "local"})
+@Profile({ "default", "test", "local" })
 public class DefaultConfiguration {
-	
+
 	@Bean
 	public QuoteRepository quoteRepository() {
-		return new QuoteRepositoryFactory()
+		return QuoteRepositoryConnectionCreator
 				.create("http://localhost:8080/quoteService");
 	}
-	
+
 }
