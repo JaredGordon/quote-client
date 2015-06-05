@@ -20,9 +20,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration("classpath:application-context.xml")
+@ContextConfiguration("file:src/main/webapp/WEB-INF/application-servlet.xml")
 @ActiveProfiles("test")
-public class QuoteFacadeTest {
+public class QuoteControllerTest {
 
     @Autowired
     private WebApplicationContext wac;

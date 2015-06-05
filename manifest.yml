@@ -3,7 +3,7 @@ applications:
 - name: quote-client
   memory: 512M
   instances: 1
-  path: target/quoteClient-0.0.1-SNAPSHOT.jar
+  path: target/quoteClient-0.0.1-SNAPSHOT.war
   services: [ quoteService ]
   env:
     SPRING_PROFILES_ACTIVE: cloud

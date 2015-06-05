@@ -7,46 +7,21 @@
 
 	<!-- Java-based annotation-driven Spring container definition -->
 	<context-param>
-		<param-name>contextClass</param-name>
-		<param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-	</context-param>
-	<context-param>
 		<param-name>spring.profiles.active</param-name>
-		<param-value>production, default</param-value>
+		<param-value>production, default, cloud</param-value>
 	</context-param>
-
-	<!-- Location of Java @Configuration classes that configure the components 
-		that makeup this application -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>org.springframework.nanotrader.web.configuration.WebConfig</param-value>
-	</context-param>
-
-	<!-- Creates the Spring Container shared by all Servlets and Filters -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-
 
 	<servlet>
-		<servlet-name>service</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value></param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-
-	</servlet>
+		<servlet-name>application</servlet-name>
+        <servlet-class>
+               org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <load-on-startup>1</load-on-startup>
+  </servlet>
+  
 	<servlet-mapping>
-		<servlet-name>service</servlet-name>
-		<url-pattern>/*</url-pattern>
+		<servlet-name>application</servlet-name>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
-
-	<!-- Disables servlet container welcome file handling. Needed for compatibility 
-		with Servlet 3.0 and Tomcat 7.0 -->
-	<welcome-file-list>
-		<welcome-file>index.html</welcome-file>
-	</welcome-file-list>
 
 </web-app>
