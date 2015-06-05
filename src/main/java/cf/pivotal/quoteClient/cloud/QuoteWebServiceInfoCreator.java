@@ -15,7 +15,6 @@ public class QuoteWebServiceInfoCreator extends CloudFoundryServiceInfoCreator<W
         super(new Tags(), QUOTES_PREFIX);
     }
 
-    @Override
     public WebServiceInfo createServiceInfo(Map<String, Object> serviceData) {
         String id = (String) serviceData.get("name");
 
