@@ -1,4 +1,4 @@
-package cf.pivotal.quoteClient;
+package cf.pivotal.quoteClient.cloud;
 
 import org.springframework.cloud.service.UriBasedServiceInfo;
 
