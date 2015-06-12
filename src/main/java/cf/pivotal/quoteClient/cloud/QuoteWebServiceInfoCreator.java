@@ -4,11 +4,9 @@ import java.util.Map;
 
 import org.springframework.cloud.cloudfoundry.CloudFoundryServiceInfoCreator;
 import org.springframework.cloud.cloudfoundry.Tags;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
-@Configuration
-@Profile({ "cloud" })
+//@Configuration
+//@Profile({ "cloud" })
 public class QuoteWebServiceInfoCreator extends CloudFoundryServiceInfoCreator<WebServiceInfo> {
 
     public static final String QUOTES_PREFIX = "quoteService";

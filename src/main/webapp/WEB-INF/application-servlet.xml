@@ -11,14 +11,10 @@
 	<context:spring-configured />
 	<context:component-scan
 		base-package="cf.pivotal.quoteClient.cloud, cf.pivotal.quoteClient">
-		<context:exclude-filter expression="org.springframework.stereotype.Controller"
-			type="annotation" />
 	</context:component-scan>
 
 	<bean id="jacksonMessageConverter"
 		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"></bean>
-
-	<bean id="quoteRepositoryConnectionCreator" class="cf.pivotal.quoteClient.QuoteRepositoryConnectionCreator" />
 
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
@@ -29,6 +25,16 @@
 		</property>
 	</bean>
 
-	<bean id="quoteController" class="cf.pivotal.quoteClient.QuoteController" />
+	<beans profile="test">
+
+		<bean id="quoteRepositoryConnectionCreator" class="cf.pivotal.quoteClient.QuoteRepositoryConnectionCreator" />
+
+		<bean id="quoteRepository"
+			class="cf.pivotal.quoteClient.QuoteRepository"
+			factory-bean="quoteRepositoryConnectionCreator" factory-method="initialize">
+			<constructor-arg type="java.lang.String"
+				value="http://localhost:8080/quoteService" />
+		</bean>
+	</beans>
 
 </beans>
