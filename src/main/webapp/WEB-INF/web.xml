@@ -8,7 +8,7 @@
 	<!-- Java-based annotation-driven Spring container definition -->
 	<context-param>
 		<param-name>spring.profiles.active</param-name>
-		<param-value>production, default, cloud</param-value>
+		<param-value>cloud</param-value>
 	</context-param>
 
 	<servlet>

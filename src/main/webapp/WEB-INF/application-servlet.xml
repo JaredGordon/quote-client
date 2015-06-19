@@ -10,7 +10,7 @@
 
 	<context:spring-configured />
 	<context:component-scan
-		base-package="cf.pivotal.quoteClient.cloud, cf.pivotal.quoteClient">
+		base-package="cf.pivotal.quoteClient">
 	</context:component-scan>
 
 	<bean id="jacksonMessageConverter"
