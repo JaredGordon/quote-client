@@ -13,7 +13,7 @@ public class Quote implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer quoteid;
+	private Integer quoteid = new Integer(-1);
 
 	private BigDecimal low;
 

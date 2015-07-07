@@ -2,30 +2,31 @@ package cf.pivotal.quoteClient;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import cf.pivotal.quoteClient.localconfig.DefaultConfiguration;
-
+@WebIntegrationTest(value = "server.port=9873")
+@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles(profiles = "test")
-@SpringApplicationConfiguration(classes = DefaultConfiguration.class)
+@SpringApplicationConfiguration(classes = { Application.class })
 public class QuoteFacadeTest {
 
 	@Autowired
-	QuoteRepository quoteRepository;
+	QuoteController quoteController;
 
 	@Test
-	public void testIt() {
-		Quote quote = quoteRepository.findBySymbol("GOOG");
+	public void testFallBack() {
+		Quote quote = quoteController.findBySymbol("GOOG");
 		assertNotNull(quote);
-		assertEquals(new Integer(46), quote.getQuoteid());
+		assertNotNull(quote.getQuoteid());
+		assertTrue(quote.getQuoteid().intValue() >= 0);
 		assertEquals("GOOG", quote.getSymbol());
 	}
-
 }
