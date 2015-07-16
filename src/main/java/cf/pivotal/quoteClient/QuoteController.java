@@ -1,86 +1,117 @@
 package cf.pivotal.quoteClient;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.DiscoveryClient;
-import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-
-import feign.Feign;
-import feign.jackson.JacksonDecoder;
-
-@RestController
-@RequestMapping("/quoteService")
+@Service
 public class QuoteController {
 
+	private static final Logger LOG = Logger.getLogger(QuoteController.class);
+
 	@Autowired
-	DiscoveryClient discoveryClient;
+	QuoteRepository quoteRepository;
 
-	@HystrixCommand(fallbackMethod = "fallBackAllQuotes")
-	@RequestMapping("/findAll")
-	public Iterable<Quote> findAllQuotes() {
-		return quoteRepository().findAll();
+	public long countAllQuotes() {
+		return quoteRepository.count();
 	}
 
-	@HystrixCommand(fallbackMethod = "fallBackBySymbol")
-	@RequestMapping("/findBySymbol/{symbol}")
-	public Quote findBySymbol(@PathVariable String symbol) {
-		return quoteRepository().findBySymbol(symbol);
+	public Quote findQuote(Integer id) {
+		return quoteRepository.findQuote(id);
 	}
 
-	public Quote fallBackBySymbol(String symbol) {
-		return fakeQuote(0);
+	public List<Quote> findAllQuotes() {
+		return quoteRepository.findAll();
 	}
 
-	public List<Quote> fallBackAllQuotes() {
-		return fakeQuotes(42);
-	}
+	public List<Quote> findQuoteEntries(int firstResult, int maxResults) {
+		long allQuotesSize = countAllQuotes();
 
-	private Quote fakeQuote(Integer id) {
-		Quote q = new Quote();
-		q.setQuoteid(id);
-		q.setChange1(new BigDecimal("0"));
-		q.setCompanyname("Foo" + id);
-		q.setHigh(new BigDecimal("0"));
-		q.setLow(new BigDecimal("0"));
-		q.setOpen1(new BigDecimal("0"));
-		q.setPrice(new BigDecimal("0"));
-		q.setSymbol(q.getCompanyname());
-		q.setVolume(new BigDecimal("0"));
-
-		return q;
-	}
-
-	private List<Quote> fakeQuotes(long size) {
-		List<Quote> q = new ArrayList<Quote>();
-		for (int i = 0; i < size; i++) {
-			q.add(fakeQuote(i));
+		if (firstResult < 0) {
+			throw new IllegalArgumentException(
+					"firstResult must be greater than -1");
 		}
-		return q;
+
+		if (firstResult >= allQuotesSize) {
+			throw new IllegalArgumentException(
+					"firstResult must be less than the size of all quotes");
+		}
+
+		if (maxResults < 1) {
+			throw new IllegalArgumentException(
+					"maxResults must be greater than 0");
+		}
+
+		if (maxResults >= allQuotesSize) {
+			throw new IllegalArgumentException(
+					"maxResults can't be greater than the size of all quotes");
+		}
+
+		if (maxResults - firstResult < 1) {
+			throw new IllegalArgumentException(
+					"maxResults must be greater than firstResult");
+		}
+
+		// enough already....
+		List<Quote> all = quoteRepository.findAll();
+		return all.subList(firstResult, maxResults);
 	}
 
-	private QuoteRepository quoteRepository() {
-		InstanceInfo i = discoveryClient.getNextServerFromEureka(
-				"quote-service", false);
-		return createRepository(i.getHomePageUrl() + "quoteService");
+	public List<Quote> topGainers() {
+		return quoteRepository.topGainers();
 	}
 
-	QuoteRepository createRepository(String url) {
-		ObjectMapper mapper = new ObjectMapper().configure(
-				DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-				.registerModule(new Jackson2HalModule());
+	public List<Quote> topLosers() {
+		return quoteRepository.topLosers();
+	}
 
-		return Feign.builder().decoder(new JacksonDecoder(mapper))
-				.target(QuoteRepository.class, url);
+	public float indexAverage() {
+		return quoteRepository.indexAverage();
+	}
+
+	public float openAverage() {
+		return quoteRepository.openAverage();
+	}
+
+	public long volume() {
+		return quoteRepository.volume();
+	}
+
+	public float change() {
+		return quoteRepository.change();
+	}
+
+	public Quote findBySymbol(String symbol) {
+		return quoteRepository.findBySymbol(symbol);
+	}
+
+	public List<Quote> findBySymbolIn(Set<String> symbols) {
+		if (symbols == null || symbols.size() < 1) {
+			return new ArrayList<Quote>();
+		}
+		return quoteRepository.findBySymbolIn(QuoteDecoder
+				.formatSymbols(symbols));
+	}
+
+	public List<Quote> findRandomQuotes(Integer count) {
+		return findAllQuotes().subList(0, count.intValue());
+	}
+
+	public Quote saveQuote(Quote quote) {
+		LOG.info("save not supported for " + getClass());
+		return quote;
+	}
+
+	public Map<String, Object> marketSummary() {
+		return quoteRepository.marketSummary();
+	}
+
+	public void deleteQuote(Quote quote) {
+		LOG.info("delete not supported for " + getClass());
 	}
 }

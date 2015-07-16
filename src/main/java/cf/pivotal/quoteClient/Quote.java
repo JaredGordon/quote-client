@@ -115,10 +115,10 @@ public class Quote implements Serializable {
 
 	@Override
 	public int hashCode() {
-		if (getQuoteid() == null) {
+		if (getSymbol() == null) {
 			return 0;
 		}
-		return getQuoteid().intValue();
+		return getSymbol().hashCode();
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class Quote implements Serializable {
 			return false;
 		}
 
-		if (((Quote) o).getQuoteid() == this.getQuoteid()) {
+		if (o.hashCode() == this.hashCode()) {
 			return true;
 		}
 		return false;
