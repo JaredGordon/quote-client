@@ -1,19 +1,38 @@
+/*
+ * Copyright 2002-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cf.pivotal.quoteClient;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * quote DTO object
- * 
- * @author jgordon
- *
- */
 public class Quote implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Integer quoteid = new Integer(-1);
+	private String quoteid = "";
+
+	public String getQuoteid() {
+		return this.quoteid;
+	}
+
+	public void setQuoteid(String s) {
+		if(s != null) {
+			this.quoteid = s;
+		}
+	}
 
 	private BigDecimal low;
 
@@ -27,27 +46,9 @@ public class Quote implements Serializable {
 
 	private String companyname;
 
-	private String symbol;
+	private String symbol = "";
 
 	private BigDecimal change1;
-
-	private int version;
-
-	public int getVersion() {
-		return version;
-	}
-
-	public void setVersion(int version) {
-		this.version = version;
-	}
-
-	public Integer getQuoteid() {
-		return quoteid;
-	}
-
-	public void setQuoteid(Integer quoteid) {
-		this.quoteid = quoteid;
-	}
 
 	public BigDecimal getLow() {
 		return low;
@@ -101,8 +102,11 @@ public class Quote implements Serializable {
 		return symbol;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setSymbol(String s) {
+		if(s != null) {
+			this.symbol = s;
+			setQuoteid(s);
+		}
 	}
 
 	public BigDecimal getChange1() {
@@ -114,25 +118,11 @@ public class Quote implements Serializable {
 	}
 
 	@Override
-	public int hashCode() {
-		if (getSymbol() == null) {
-			return 0;
-		}
-		return getSymbol().hashCode();
+	public String toString() {
+		return "Quote [quoteid=" + quoteid + ", low=" + low + ", open1="
+				+ open1 + ", volume=" + volume + ", price=" + price + ", high="
+				+ high + ", companyname=" + companyname + ", symbol=" + symbol
+				+ ", change1=" + change1 + "]";
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (o == null) {
-			return false;
-		}
-		if (!(o instanceof Quote)) {
-			return false;
-		}
-
-		if (o.hashCode() == this.hashCode()) {
-			return true;
-		}
-		return false;
-	}
 }

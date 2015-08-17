@@ -50,16 +50,34 @@ public class QuoteControllerTest {
 
 	@Test
 	public void testFindBySymbolIn() {
-		Set<String> s = new HashSet<String>();
-		s.add("BRCM");
-		s.add("EBAY");
-		List<Quote> res = quoteController.findBySymbolIn(s);
+		List<Quote> res = quoteController.findBySymbolIn(null);
 		assertNotNull(res);
-		assertTrue("Should have two results.", res.size() == 2);
+		assertTrue("Should have no results.", res.size() == 0);
+
+		Set<String> s = new HashSet<String>();
+		res = quoteController.findBySymbolIn(s);
+		assertNotNull(res);
+		assertTrue("Should have no results.", res.size() == 0);
+
+		s.add("BRCM");
+		res = quoteController.findBySymbolIn(s);
+		assertNotNull(res);
+		assertTrue("Should have 1 result.", res.size() == 1);
+		assertTrue("BRCM".equals(res.get(0).getSymbol()));
+
+		s.add("EBAY");
+		res = quoteController.findBySymbolIn(s);
+		assertNotNull(res);
+		assertTrue("Should have 2 results.", res.size() == 2);
 		assertTrue("BRCM".equals(res.get(0).getSymbol())
 				|| "EBAY".equals(res.get(0).getSymbol()));
 		assertTrue("BRCM".equals(res.get(1).getSymbol())
 				|| "EBAY".equals(res.get(1).getSymbol()));
+
+		s.add("YHOO");
+		res = quoteController.findBySymbolIn(s);
+		assertNotNull(res);
+		assertTrue("Should have 3 results.", res.size() == 3);
 	}
 
 	@Test

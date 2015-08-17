@@ -21,7 +21,7 @@ public class QuoteController {
 		return quoteRepository.count();
 	}
 
-	public Quote findQuote(Integer id) {
+	public Quote findQuote(String id) {
 		return quoteRepository.findQuote(id);
 	}
 
@@ -94,6 +94,13 @@ public class QuoteController {
 		if (symbols == null || symbols.size() < 1) {
 			return new ArrayList<Quote>();
 		}
+
+		if (symbols.size() == 1) {
+			List<Quote> ret = new ArrayList<Quote>();
+			ret.add(findBySymbol(symbols.toArray()[0].toString()));
+			return ret;
+		}
+
 		return quoteRepository.findBySymbolIn(QuoteDecoder
 				.formatSymbols(symbols));
 	}
