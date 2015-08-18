@@ -111,7 +111,7 @@ public class QuoteControllerTest {
 
 	@Test
 	public void testMarketSummary() {
-		Map<String, Object> m = quoteController.marketSummary();
+		Map<String, Float> m = quoteController.marketSummary();
 		assertNotNull(m);
 		assertTrue(m.size() == 5);
 		assertNotNull(m.get("tradeStockIndexAverage"));

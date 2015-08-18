@@ -33,7 +33,7 @@ public interface QuoteRepository {
 	List<Quote> topLosers();
 
 	@RequestLine("GET /marketSummary")
-	Map<String, Object> marketSummary();
+	Map<String, Float> marketSummary();
 
 	@RequestLine("GET /indexAverage")
 	float indexAverage();

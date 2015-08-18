@@ -114,7 +114,7 @@ public class QuoteController {
 		return quote;
 	}
 
-	public Map<String, Object> marketSummary() {
+	public Map<String, Float> marketSummary() {
 		return quoteRepository.marketSummary();
 	}
 
