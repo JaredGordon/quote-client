@@ -18,6 +18,9 @@ package cf.pivotal.quoteClient;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 public class Quote implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -29,7 +32,7 @@ public class Quote implements Serializable {
 	}
 
 	public void setQuoteid(String s) {
-		if(s != null) {
+		if (s != null) {
 			this.quoteid = s;
 		}
 	}
@@ -103,7 +106,7 @@ public class Quote implements Serializable {
 	}
 
 	public void setSymbol(String s) {
-		if(s != null) {
+		if (s != null) {
 			this.symbol = s;
 			setQuoteid(s);
 		}
@@ -117,12 +120,9 @@ public class Quote implements Serializable {
 		this.change1 = change1;
 	}
 
-	@Override
 	public String toString() {
-		return "Quote [quoteid=" + quoteid + ", low=" + low + ", open1="
-				+ open1 + ", volume=" + volume + ", price=" + price + ", high="
-				+ high + ", companyname=" + companyname + ", symbol=" + symbol
-				+ ", change1=" + change1 + "]";
+		return ReflectionToStringBuilder.toString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }

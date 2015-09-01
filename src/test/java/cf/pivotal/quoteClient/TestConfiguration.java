@@ -11,11 +11,8 @@ public class TestConfiguration {
 
 	@Bean
 	public QuoteRepository quoteRepository() {
-		return Feign
-				.builder()
-				.encoder(new GsonEncoder())
+		return Feign.builder().encoder(new GsonEncoder())
 				.decoder(new QuoteDecoder())
-				.target(QuoteRepository.class,
-						"http://real-time-quote-service.cfapps.io/quoteService");
+				.target(QuoteRepository.class, "http://localhost:8080/quotes");
 	}
 }

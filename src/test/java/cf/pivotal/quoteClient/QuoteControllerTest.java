@@ -7,7 +7,6 @@ import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -40,12 +39,12 @@ public class QuoteControllerTest {
 			fail(t.getMessage());
 		}
 		assertEquals("Google Inc.", obj.getCompanyname());
-		assertTrue(obj.getHigh().floatValue() > 0.0);
-		assertTrue(obj.getLow().floatValue() > 0);
-		assertTrue(obj.getOpen1().floatValue() > 0);
-		assertTrue(obj.getPrice().floatValue() > 0);
+		assertNotNull(obj.getHigh());
+		assertNotNull(obj.getLow());
+		assertNotNull(obj.getOpen1());
+		assertNotNull(obj.getPrice());
 		assertEquals("GOOG", obj.getSymbol());
-		assertTrue(obj.getVolume().floatValue() > 0);
+		assertNotNull(obj.getVolume());
 	}
 
 	@Test
@@ -59,19 +58,19 @@ public class QuoteControllerTest {
 		assertNotNull(res);
 		assertTrue("Should have no results.", res.size() == 0);
 
-		s.add("BRCM");
+		s.add("AAPL");
 		res = quoteController.findBySymbolIn(s);
 		assertNotNull(res);
 		assertTrue("Should have 1 result.", res.size() == 1);
-		assertTrue("BRCM".equals(res.get(0).getSymbol()));
+		assertTrue("AAPL".equals(res.get(0).getSymbol()));
 
 		s.add("EBAY");
 		res = quoteController.findBySymbolIn(s);
 		assertNotNull(res);
 		assertTrue("Should have 2 results.", res.size() == 2);
-		assertTrue("BRCM".equals(res.get(0).getSymbol())
+		assertTrue("AAPL".equals(res.get(0).getSymbol())
 				|| "EBAY".equals(res.get(0).getSymbol()));
-		assertTrue("BRCM".equals(res.get(1).getSymbol())
+		assertTrue("AAPL".equals(res.get(1).getSymbol())
 				|| "EBAY".equals(res.get(1).getSymbol()));
 
 		s.add("YHOO");
@@ -81,44 +80,13 @@ public class QuoteControllerTest {
 	}
 
 	@Test
-	public void testFindIndexAverage() {
-		float f = quoteController.indexAverage();
-		assertTrue(f > 0.0f);
-	}
-
-	@Test
-	public void testFindOpenAverage() {
-		float f = quoteController.openAverage();
-		assertTrue(f > 0.0f);
-	}
-
-	@Test
-	public void testFindVolume() {
-		long l = quoteController.volume();
-		assertTrue(l > 0);
-	}
-
-	@Test
-	public void testFindChange() {
-		try {
-			quoteController.change();
-		} catch (Throwable t) {
-			// can be any number, positive, negative or zero, so just looking
-			// for "no exception."
-			fail(t.getMessage());
-		}
-	}
-
-	@Test
 	public void testMarketSummary() {
-		Map<String, Float> m = quoteController.marketSummary();
+		MarketSummary m = quoteController.marketSummary();
 		assertNotNull(m);
-		assertTrue(m.size() == 5);
-		assertNotNull(m.get("tradeStockIndexAverage"));
-		assertNotNull(m.get("tradeStockIndexOpenAverage"));
-		assertNotNull(m.get("tradeStockIndexVolume"));
-		assertNotNull(m.get("cnt"));
-		assertNotNull(m.get("change"));
+		assertNotNull(m.getAverage());
+		assertNotNull(m.getOpen());
+		assertNotNull(m.getVolume());
+		assertNotNull(m.getChange());
 	}
 
 	@Test
@@ -154,11 +122,19 @@ public class QuoteControllerTest {
 	public void testFindAll() {
 		List<Quote> all = quoteController.findAllQuotes();
 		assertEquals("22", "" + all.size());
-		Quote q = all.get(0);
+	}
+
+	@Test
+	public void testDelete() {
+		Quote q = quoteController.findBySymbol("GOOG");
 		assertNotNull(q);
-		assertEquals(q.getSymbol(), "AAPL");
-		q = all.get(21);
-		assertNotNull(q);
-		assertEquals(q.getSymbol(), "YHOO");
+		quoteController.deleteQuote(q);
+	}
+
+	@Test
+	public void testSave() {
+		Quote q = new Quote();
+		q.setSymbol("foo");
+		quoteController.saveQuote(q);
 	}
 }

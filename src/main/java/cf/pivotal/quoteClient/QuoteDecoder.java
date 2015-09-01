@@ -5,7 +5,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import net.minidev.json.JSONArray;
 
@@ -94,25 +93,5 @@ public class QuoteDecoder extends GsonDecoder {
 		}
 
 		return quotes;
-	}
-
-	public static String formatSymbols(Set<String> symbols) {
-		if (symbols == null || symbols.size() < 1) {
-			return "()";
-		}
-
-		Object[] o = symbols.toArray();
-
-		StringBuffer sb = new StringBuffer("(");
-		for (int i = 0; i < o.length; i++) {
-			sb.append("\'");
-			sb.append(o[i]);
-			sb.append("\'");
-			if (i < o.length - 1) {
-				sb.append(",");
-			}
-		}
-		sb.append(")");
-		return sb.toString();
 	}
 }
