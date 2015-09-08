@@ -36,4 +36,5 @@ public interface QuoteService {
 
 	Quote findBySymbol(String symbol);
 
+	MarketSummary marketSummary();
 }
