@@ -4,20 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class QuoteController implements QuoteService {
 
-	private static final Logger LOG = Logger.getLogger(QuoteController.class);
-
 	@Autowired
 	QuoteRepository quoteRepository;
 
 	public long countAllQuotes() {
-		return quoteRepository.symbols().size();
+		return quoteRepository.count();
 	}
 
 	public List<Quote> findAllQuotes() {
@@ -54,16 +51,19 @@ public class QuoteController implements QuoteService {
 	}
 
 	public MarketSummary marketSummary() {
-		return quoteRepository.marketSummary();
+		MarketSummary ms = quoteRepository.marketSummary();
+		ms.setTopGainers(topGainers());
+		ms.setTopLosers(topLosers());
+
+		return ms;
 	}
 
 	public void deleteQuote(Quote quote) {
-		LOG.info("delete not supported for " + getClass());
+		quoteRepository.delete(quote);
 	}
 
 	@Override
-	public void saveQuote(Quote quote) {
-		LOG.info("save not supported for " + getClass());
-
+	public Quote saveQuote(Quote quote) {
+		return quoteRepository.save(quote);
 	}
 }

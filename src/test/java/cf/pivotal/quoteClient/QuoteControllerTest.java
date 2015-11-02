@@ -38,7 +38,7 @@ public class QuoteControllerTest {
 		} catch (Throwable t) {
 			fail(t.getMessage());
 		}
-		assertEquals("Google Inc.", obj.getCompanyname());
+		assertEquals("Alphabet Inc.", obj.getCompanyname());
 		assertNotNull(obj.getHigh());
 		assertNotNull(obj.getLow());
 		assertNotNull(obj.getOpen1());
@@ -73,7 +73,7 @@ public class QuoteControllerTest {
 		assertTrue("AAPL".equals(res.get(1).getSymbol())
 				|| "EBAY".equals(res.get(1).getSymbol()));
 
-		s.add("YHOO");
+		s.add("VMW");
 		res = quoteController.findBySymbolIn(s);
 		assertNotNull(res);
 		assertTrue("Should have 3 results.", res.size() == 3);
@@ -83,10 +83,16 @@ public class QuoteControllerTest {
 	public void testMarketSummary() {
 		MarketSummary m = quoteController.marketSummary();
 		assertNotNull(m);
-		assertNotNull(m.getAverage());
-		assertNotNull(m.getOpen());
-		assertNotNull(m.getVolume());
 		assertNotNull(m.getChange());
+		assertNotNull(m.getPercentGain());
+		assertNotNull(m.getSummaryDate());
+		assertNotNull(m.getTradeStockIndexAverage());
+		assertNotNull(m.getTradeStockIndexOpenAverage());
+		assertNotNull(m.getTradeStockIndexVolume());
+		assertNotNull(m.getTopGainers());
+		assertEquals(3, m.getTopGainers().size());
+		assertNotNull(m.getTopLosers());
+		assertEquals(3, m.getTopLosers().size());
 	}
 
 	@Test
@@ -121,20 +127,16 @@ public class QuoteControllerTest {
 	@Test
 	public void testFindAll() {
 		List<Quote> all = quoteController.findAllQuotes();
-		assertEquals("22", "" + all.size());
-	}
-
-	@Test
-	public void testDelete() {
-		Quote q = quoteController.findBySymbol("GOOG");
-		assertNotNull(q);
-		quoteController.deleteQuote(q);
+		assertEquals("20", "" + all.size());
 	}
 
 	@Test
 	public void testSave() {
 		Quote q = new Quote();
 		q.setSymbol("foo");
-		quoteController.saveQuote(q);
+		Quote q2 = quoteController.saveQuote(q);
+		assertNotNull(q2);
+
+		quoteController.deleteQuote(q2);
 	}
 }

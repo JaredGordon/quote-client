@@ -32,9 +32,10 @@ public interface QuoteService {
 
 	List<Quote> findBySymbolIn(Set<String> symbols);
 
-	void saveQuote(Quote quote);
+	Quote saveQuote(Quote quote);
 
 	Quote findBySymbol(String symbol);
 
 	MarketSummary marketSummary();
+
 }

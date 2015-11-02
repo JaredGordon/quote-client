@@ -1,70 +1,115 @@
+/*
+ * Copyright 2002-2012 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cf.pivotal.quoteClient;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+public class MarketSummary {
 
-public class MarketSummary implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private BigDecimal tradeStockIndexAverage;
 
-	private BigDecimal average;
-	private BigDecimal open;
-	private BigDecimal volume;
+	private BigDecimal tradeStockIndexVolume;
+
+	private BigDecimal tradeStockIndexOpenAverage;
+
+	private List<Quote> topLosers;
+
+	private List<Quote> topGainers;
+
+	private Date summaryDate;
+
 	private BigDecimal change;
 
-	public MarketSummary(Quote index, List<Quote> topLosers,
-			List<Quote> topGainers) {
-		load(index);
-	}
-
-	private void load(Quote index) {
-		if (index == null) {
-			return;
-		}
-		setAverage(index.getPrice());
-		setOpen(index.getOpen1());
-		setVolume(index.getVolume());
-		setChange(index.getChange1());
-	}
-
-	public BigDecimal getAverage() {
-		return average;
-	}
-
-	private void setAverage(BigDecimal average) {
-		this.average = average;
-	}
-
-	public BigDecimal getOpen() {
-		return open;
-	}
-
-	private void setOpen(BigDecimal open) {
-		this.open = open;
-	}
-
-	public BigDecimal getVolume() {
-		return volume;
-	}
-
-	private void setVolume(BigDecimal volume) {
-		this.volume = volume;
-	}
+	private BigDecimal percentGain;
 
 	public BigDecimal getChange() {
 		return change;
 	}
 
-	private void setChange(BigDecimal change) {
+	public void setChange(BigDecimal change) {
 		this.change = change;
 	}
 
+	public BigDecimal getPercentGain() {
+		return percentGain;
+	}
+
+	public BigDecimal getTradeStockIndexAverage() {
+		return tradeStockIndexAverage;
+	}
+
+	public void setTradeStockIndexAverage(BigDecimal tradeStockIndexAverage) {
+		this.tradeStockIndexAverage = tradeStockIndexAverage;
+	}
+
+	public BigDecimal getTradeStockIndexVolume() {
+		return tradeStockIndexVolume;
+	}
+
+	public void setTradeStockIndexVolume(BigDecimal tradeStockIndexVolume) {
+		this.tradeStockIndexVolume = tradeStockIndexVolume;
+	}
+
+	public BigDecimal getTradeStockIndexOpenAverage() {
+		return tradeStockIndexOpenAverage;
+	}
+
+	public void setTradeStockIndexOpenAverage(
+			BigDecimal tradeStockIndexOpenAverage) {
+		this.tradeStockIndexOpenAverage = tradeStockIndexOpenAverage;
+	}
+
+	public List<Quote> getTopLosers() {
+		return topLosers;
+	}
+
+	public void setTopLosers(List<Quote> topLosers) {
+		this.topLosers = topLosers;
+	}
+
+	public List<Quote> getTopGainers() {
+		return topGainers;
+	}
+
+	public void setTopGainers(List<Quote> topGainers) {
+		this.topGainers = topGainers;
+	}
+
+	public Date getSummaryDate() {
+		return summaryDate;
+	}
+
+	public void setSummaryDate(Date summaryDate) {
+		this.summaryDate = summaryDate;
+	}
+
+	@Override
 	public String toString() {
-		return ReflectionToStringBuilder.toString(this,
-				ToStringStyle.SHORT_PREFIX_STYLE);
+		return "MarketSummary [tradeStockIndexAverage="
+				+ tradeStockIndexAverage + ", tradeStockIndexVolume="
+				+ tradeStockIndexVolume + ", tradeStockIndexOpenAverage="
+				+ tradeStockIndexOpenAverage + ", topLosers=" + topLosers
+				+ ", topGainers=" + topGainers + ", summaryDate=" + summaryDate
+				+ ", percentGain=" + getPercentGain() + "]";
+	}
+
+	public void setPercentGain(BigDecimal percentGain) {
+		this.percentGain = percentGain;
 	}
 
 }

@@ -13,6 +13,6 @@ public class TestConfiguration {
 	public QuoteRepository quoteRepository() {
 		return Feign.builder().encoder(new GsonEncoder())
 				.decoder(new QuoteDecoder())
-				.target(QuoteRepository.class, "http://localhost:8080/quotes");
+				.target(QuoteRepository.class, "http://db-quote-service.cfapps.io/quotes");
 	}
 }
