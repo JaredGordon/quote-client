@@ -38,7 +38,7 @@ public class QuoteControllerTest {
 		} catch (Throwable t) {
 			fail(t.getMessage());
 		}
-		assertEquals("Google Inc.", obj.getCompanyname());
+		assertEquals("Alphabet Inc.", obj.getCompanyname());
 		assertNotNull(obj.getHigh());
 		assertNotNull(obj.getLow());
 		assertNotNull(obj.getOpen1());
@@ -121,13 +121,13 @@ public class QuoteControllerTest {
 
 	@Test
 	public void testCountAllQuotes() {
-		assertEquals("20", "" + quoteController.countAllQuotes());
+		assertEquals("22", "" + quoteController.countAllQuotes());
 	}
 
 	@Test
 	public void testFindAll() {
 		List<Quote> all = quoteController.findAllQuotes();
-		assertEquals("20", "" + all.size());
+		assertEquals("22", "" + all.size());
 	}
 
 	@Test
