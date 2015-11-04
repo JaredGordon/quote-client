@@ -28,9 +28,9 @@ public class Quote implements Serializable {
 		return this.quoteid;
 	}
 
-	public void setQuoteid(String s) {
-		if(s != null) {
-			this.quoteid = s;
+	public void setQuoteid(String id) {
+		if (id != null) {
+			this.quoteid = id;
 		}
 	}
 
@@ -51,78 +51,88 @@ public class Quote implements Serializable {
 	private BigDecimal change1;
 
 	public BigDecimal getLow() {
-		return low;
-	}
+        return low;
+    }
 
 	public void setLow(BigDecimal low) {
-		this.low = low;
-	}
+        this.low = low;
+    }
 
 	public BigDecimal getOpen1() {
-		return open1;
-	}
+        return open1;
+    }
 
 	public void setOpen1(BigDecimal open1) {
-		this.open1 = open1;
-	}
+        this.open1 = open1;
+    }
 
 	public BigDecimal getVolume() {
-		return volume;
-	}
+        return volume;
+    }
 
 	public void setVolume(BigDecimal volume) {
-		this.volume = volume;
-	}
+        this.volume = volume;
+    }
 
 	public BigDecimal getPrice() {
-		return price;
-	}
+        return price;
+    }
 
 	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
+        this.price = price;
+    }
 
 	public BigDecimal getHigh() {
-		return high;
-	}
+        return high;
+    }
 
 	public void setHigh(BigDecimal high) {
-		this.high = high;
-	}
+        this.high = high;
+    }
 
 	public String getCompanyname() {
-		return companyname;
-	}
+        return companyname;
+    }
 
 	public void setCompanyname(String companyname) {
-		this.companyname = companyname;
-	}
+        this.companyname = companyname;
+    }
 
 	public String getSymbol() {
-		return symbol;
-	}
+        return symbol;
+    }
 
-	public void setSymbol(String s) {
-		if(s != null) {
-			this.symbol = s;
-			setQuoteid(s);
+	public void setSymbol(String symbol) {
+		if (symbol != null) {
+			this.symbol = symbol;
+			setQuoteid(symbol);
 		}
 	}
 
 	public BigDecimal getChange1() {
-		return change1;
-	}
+        return change1;
+    }
 
 	public void setChange1(BigDecimal change1) {
-		this.change1 = change1;
-	}
+        this.change1 = change1;
+    }
 
 	@Override
 	public String toString() {
-		return "Quote [quoteid=" + quoteid + ", low=" + low + ", open1="
-				+ open1 + ", volume=" + volume + ", price=" + price + ", high="
-				+ high + ", companyname=" + companyname + ", symbol=" + symbol
-				+ ", change1=" + change1 + "]";
+		return "Quote [quoteid=" + quoteid + ", low=" + low + ", open1=" + open1 + ", volume=" + volume + ", price="
+				+ price + ", high=" + high + ", companyname=" + companyname + ", symbol=" + symbol + ", change1="
+				+ change1 + "]";
+	}
+
+	public int hashCode() {
+		return getQuoteid().hashCode();
+	}
+
+	public boolean equals(Object o) {
+		if( o == null || (! o.getClass().equals(getClass())) ) {
+			return false;
+		}
+		return o.hashCode() == hashCode();
 	}
 
 }
