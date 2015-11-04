@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -34,7 +35,11 @@ public class QuoteDecoder extends GsonDecoder {
 		Type typeOfListOfQuote = new TypeToken<List<Quote>>() {
 		}.getType();
 		if (Quote.class.equals(type) || typeOfListOfQuote.equals(type)) {
-			return processBody(body);
+			return processQuoteBody(body);
+		}
+
+		if (MarketSummary.class.equals(type)) {
+			return processMarketSummaryBody(body);
 		}
 
 		return super.decode(response, type);
@@ -48,7 +53,7 @@ public class QuoteDecoder extends GsonDecoder {
 		return new BigDecimal(o.toString());
 	}
 
-	private Object processBody(Response.Body body) throws IOException {
+	private Object processQuoteBody(Response.Body body) throws IOException {
 		ReadContext ctx = JsonPath.parse(body.asInputStream());
 
 		Object o = ctx.read("$");
@@ -57,6 +62,21 @@ public class QuoteDecoder extends GsonDecoder {
 		}
 
 		return quoteFromJson(ctx);
+	}
+
+	private MarketSummary processMarketSummaryBody(Response.Body body)
+			throws IOException {
+		ReadContext ctx = JsonPath.parse(body.asInputStream());
+
+		MarketSummary ms = new MarketSummary();
+		ms.setChange(getBigDecimal(ctx, "$.change"));
+		ms.setPercentGain(getBigDecimal(ctx, "$.percentGain"));
+		ms.setSummaryDate(new Date());
+		ms.setTradeStockIndexAverage(getBigDecimal(ctx, "$.average"));
+		ms.setTradeStockIndexOpenAverage(getBigDecimal(ctx, "$.open"));
+		ms.setTradeStockIndexVolume(getBigDecimal(ctx, "$.volume"));
+
+		return ms;
 	}
 
 	private Quote quoteFromJson(ReadContext ctx) {

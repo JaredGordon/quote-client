@@ -1,7 +1,6 @@
 package cf.pivotal.quoteClient;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +57,6 @@ public class QuoteController implements QuoteService {
 		MarketSummary ms = quoteRepository.marketSummary();
 		ms.setTopGainers(topGainers());
 		ms.setTopLosers(topLosers());
-		ms.setSummaryDate(new Date());
 		return ms;
 	}
 
