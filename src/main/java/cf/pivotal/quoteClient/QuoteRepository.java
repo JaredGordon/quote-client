@@ -16,9 +16,6 @@ public interface QuoteRepository {
 	@RequestLine("GET /")
 	public List<Quote> findAll();
 
-	@RequestLine("GET /symbols")
-	List<String> symbols();
-
 	@RequestLine("GET /marketSummary")
 	MarketSummary marketSummary();
 
