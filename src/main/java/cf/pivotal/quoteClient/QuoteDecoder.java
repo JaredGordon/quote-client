@@ -22,9 +22,9 @@ import feign.Response;
 import feign.codec.DecodeException;
 import feign.gson.GsonDecoder;
 
-public class DBQuoteDecoder extends GsonDecoder {
+public class QuoteDecoder extends GsonDecoder {
 
-	private static final Logger LOG = Logger.getLogger(DBQuoteDecoder.class);
+	private static final Logger LOG = Logger.getLogger(QuoteDecoder.class);
 
 	@Override
 	public Object decode(Response response, Type type) throws IOException,

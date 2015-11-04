@@ -12,7 +12,7 @@ public class TestConfiguration {
 	@Bean
 	public QuoteRepository quoteRepository() {
 		return Feign.builder().encoder(new GsonEncoder())
-				.decoder(new DBQuoteDecoder())
+				.decoder(new QuoteDecoder())
 				.target(QuoteRepository.class, "http://live-quote-service.cfapps.io/quotes");
 	}
 }
