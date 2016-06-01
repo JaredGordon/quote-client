@@ -1,185 +1,183 @@
 package cf.pivotal.quoteClient;
 
+import com.google.gson.reflect.TypeToken;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.PathNotFoundException;
+import com.jayway.jsonpath.ReadContext;
+import feign.FeignException;
+import feign.Response;
+import feign.gson.GsonDecoder;
+import net.minidev.json.JSONArray;
+import net.minidev.json.JSONObject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.util.NumberUtils;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
-import net.minidev.json.JSONArray;
-import net.minidev.json.JSONObject;
+class QuoteDecoder extends GsonDecoder {
 
-import org.apache.log4j.Logger;
-import org.springframework.util.NumberUtils;
+    private static final Logger LOG = LogManager.getLogger(QuoteDecoder.class);
 
-import com.google.gson.reflect.TypeToken;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
+    @Override
+    public Object decode(Response response, Type type) throws IOException, FeignException {
+        Response.Body body = response.body();
+        if (body == null) {
+            return null;
+        }
 
-import feign.FeignException;
-import feign.Response;
-import feign.codec.DecodeException;
-import feign.gson.GsonDecoder;
+        // System.out.println(Util.toString(body.asReader()));
 
-public class QuoteDecoder extends GsonDecoder {
+        Type typeOfListOfQuote = new TypeToken<List<Quote>>() {
+        }.getType();
+        if (Quote.class.equals(type) || typeOfListOfQuote.equals(type)) {
+            return processQuoteBody(body);
+        }
 
-	private static final Logger LOG = Logger.getLogger(QuoteDecoder.class);
+        if (MarketSummary.class.equals(type)) {
+            return processMarketSummaryBody(body);
+        }
 
-	@Override
-	public Object decode(Response response, Type type) throws IOException,
-			DecodeException, FeignException {
+        return super.decode(response, type);
+    }
 
-		Response.Body body = response.body();
-		if (body == null) {
-			return null;
-		}
+    private BigDecimal getBigDecimal(ReadContext ctx, String path) {
+        Object o = ctx.read(path);
+        if (o == null) {
+            return new BigDecimal(0);
+        }
+        return NumberUtils.parseNumber(o.toString(), BigDecimal.class);
+    }
 
-		// System.out.println(Util.toString(body.asReader()));
+    private BigDecimal getBigDecimal(JSONObject jo, String key) {
+        if (getString(jo, key) == null) {
+            return new BigDecimal(0);
+        }
+        return new BigDecimal(jo.get(key).toString());
+    }
 
-		Type typeOfListOfQuote = new TypeToken<List<Quote>>() {
-		}.getType();
-		if (Quote.class.equals(type) || typeOfListOfQuote.equals(type)) {
-			return processQuoteBody(body);
-		}
+    private Object processQuoteBody(Response.Body body) throws IOException {
+        ReadContext ctx = JsonPath.parse(body.asInputStream());
 
-		if (MarketSummary.class.equals(type)) {
-			return processMarketSummaryBody(body);
-		}
+        // might be a list of quotes in a HATEOAS collection
+        try {
+            return quotesFromJSONArray((JSONArray) ctx
+                    .read("$._embedded.quotes"));
+        } catch (Exception e) {
+            LOG.info("continuing after exception catch.", e);
+        }
 
-		return super.decode(response, type);
-	}
+        // might be a list of raw list of quotes
+        if (ctx.json() instanceof JSONArray) {
+            return quotesFromJSONArray((JSONArray) ctx.json());
+        }
 
-	private BigDecimal getBigDecimal(ReadContext ctx, String path) {
-		Object o = ctx.read(path);
-		if (o == null) {
-			return new BigDecimal(0);
-		}
-		return NumberUtils.parseNumber(o.toString(), BigDecimal.class);
-	}
+        // or just a single quote
+        return quoteFromJson(ctx);
+    }
 
-	private BigDecimal getBigDecimal(JSONObject jo, String key) {
-		if (getString(jo, key) == null) {
-			return new BigDecimal(0);
-		}
-		return new BigDecimal(jo.get(key).toString());
-	}
+    private MarketSummary processMarketSummaryBody(Response.Body body)
+            throws IOException {
+        ReadContext ctx = JsonPath.parse(body.asInputStream());
+        MarketSummary ms = new MarketSummary();
 
-	private Object processQuoteBody(Response.Body body) throws IOException {
-		ReadContext ctx = JsonPath.parse(body.asInputStream());
+        ms.setChange(getBigDecimal(ctx, "$.change"));
+        ms.setPercentGain(getBigDecimal(ctx, "$.percentGain"));
+        ms.setSummaryDate(new Date(getBigDecimal(ctx, "$.summaryDate")
+                .longValue()));
+        ms.setTradeStockIndexAverage(getBigDecimal(ctx,
+                "$.tradeStockIndexAverage"));
+        ms.setTradeStockIndexOpenAverage(getBigDecimal(ctx,
+                "$.tradeStockIndexOpenAverage"));
+        ms.setTradeStockIndexVolume(getBigDecimal(ctx,
+                "$.tradeStockIndexVolume"));
 
-		// might be a list of quotes in a HATEOAS collection
-		try {
-			return quotesFromJSONArray((JSONArray) ctx
-					.read("$._embedded.quotes"));
-		} catch (Exception e) {
-			LOG.debug("continuing after exception catch.", e);
-		}
+        return ms;
+    }
 
-		// might be a list of raw list of quotes
-		if (ctx.json() instanceof JSONArray) {
-			return quotesFromJSONArray((JSONArray) ctx.json());
-		}
+    private Quote quoteFromJson(ReadContext ctx) {
+        Quote q = new Quote();
+        q.setChange1(getBigDecimal(ctx, "$.change"));
 
-		// or just a single quote
-		return quoteFromJson(ctx);
-	}
+        Object name = ctx.read("$.companyname");
+        if (name != null) {
+            q.setCompanyname(name.toString());
+        }
 
-	private MarketSummary processMarketSummaryBody(Response.Body body)
-			throws IOException {
-		ReadContext ctx = JsonPath.parse(body.asInputStream());
-		MarketSummary ms = new MarketSummary();
+        q.setHigh(getBigDecimal(ctx, "$.high"));
+        q.setLow(getBigDecimal(ctx, "$.low"));
+        q.setOpen1(getBigDecimal(ctx, "$.open"));
+        q.setPrice(getBigDecimal(ctx, "$.price"));
+        q.setVolume(getBigDecimal(ctx, "$.volume"));
 
-		ms.setChange(getBigDecimal(ctx, "$.change"));
-		ms.setPercentGain(getBigDecimal(ctx, "$.percentGain"));
-		ms.setSummaryDate(new Date(getBigDecimal(ctx, "$.summaryDate")
-				.longValue()));
-		ms.setTradeStockIndexAverage(getBigDecimal(ctx,
-				"$.tradeStockIndexAverage"));
-		ms.setTradeStockIndexOpenAverage(getBigDecimal(ctx,
-				"$.tradeStockIndexOpenAverage"));
-		ms.setTradeStockIndexVolume(getBigDecimal(ctx,
-				"$.tradeStockIndexVolume"));
+        try {
+            ctx.read("$._links");
+            q.setSymbol(getIdFromLink(ctx.read("$._links.self.href").toString()));
+        } catch (PathNotFoundException e) {
+            LOG.info("no links on quote.");
+        }
 
-		return ms;
-	}
+        if (q.getSymbol() == null || q.getSymbol().length() < 1) {
+            q.setSymbol(ctx.read("$.symbol").toString());
+        }
 
-	private Quote quoteFromJson(ReadContext ctx) {
-		Quote q = new Quote();
-		q.setChange1(getBigDecimal(ctx, "$.change"));
+        return q;
+    }
 
-		Object name = ctx.read("$.companyname");
-		if (name != null) {
-			q.setCompanyname(name.toString());
-		}
+    private List<Quote> quotesFromJSONArray(JSONArray ja) {
+        ArrayList<Quote> quotes = new ArrayList<Quote>();
 
-		q.setHigh(getBigDecimal(ctx, "$.high"));
-		q.setLow(getBigDecimal(ctx, "$.low"));
-		q.setOpen1(getBigDecimal(ctx, "$.open"));
-		q.setPrice(getBigDecimal(ctx, "$.price"));
-		q.setVolume(getBigDecimal(ctx, "$.volume"));
+        for (int i = 0; i < ja.size(); i++) {
+            Quote q = new Quote();
+            JSONObject jo = new JSONObject((Map) ja.get(i));
 
-		if (ctx.read("$._links") != null) {
-			Object symbol = getIdFromLink(ctx.read("$._links.self.href")
-					.toString());
-			if (symbol != null) {
-				q.setSymbol(symbol.toString());
-			}
-		} else {
-			q.setSymbol(ctx.read("$.symbol").toString());
-		}
+            q.setChange1(getBigDecimal(jo, "change"));
 
-		return q;
-	}
+            q.setCompanyname(getString(jo, "companyname"));
 
-	private List<Quote> quotesFromJSONArray(JSONArray ja) {
-		ArrayList<Quote> quotes = new ArrayList<Quote>();
+            q.setHigh(getBigDecimal(jo, "high"));
+            q.setLow(getBigDecimal(jo, "low"));
+            q.setOpen1(getBigDecimal(jo, "open"));
+            q.setPrice(getBigDecimal(jo, "price"));
+            q.setVolume(getBigDecimal(jo, "volume"));
 
-		for (int i = 0; i < ja.size(); i++) {
-			Quote q = new Quote();
-			JSONObject jo = (JSONObject) ja.get(i);
+            if (jo.get("symbol") != null) {
+                q.setSymbol(getString(jo, "symbol"));
+            } else {
+                q.setSymbol(getIdFromLinks(jo));
+            }
 
-			q.setChange1(getBigDecimal(jo, "change"));
+            quotes.add(q);
+        }
 
-			q.setCompanyname(getString(jo, "companyname"));
+        return quotes;
+    }
 
-			q.setHigh(getBigDecimal(jo, "high"));
-			q.setLow(getBigDecimal(jo, "low"));
-			q.setOpen1(getBigDecimal(jo, "open"));
-			q.setPrice(getBigDecimal(jo, "price"));
-			q.setVolume(getBigDecimal(jo, "volume"));
+    private String getIdFromLinks(JSONObject jo) {
+        JSONObject links = new JSONObject((Map) jo.get("_links"));
+        JSONObject self = new JSONObject((Map) links.get("self"));
+        return getIdFromLink(self.get("href").toString());
+    }
 
-			if (jo.get("symbol") != null) {
-				q.setSymbol(getString(jo, "symbol"));
-			} else {
-				q.setSymbol(getIdFromLinks(jo));
-			}
+    private String getString(JSONObject jo, String key) {
+        if (jo == null || key == null || !jo.containsKey(key)) {
+            return null;
+        }
 
-			quotes.add(q);
-		}
+        return jo.get(key).toString();
 
-		return quotes;
-	}
+    }
 
-	private String getIdFromLinks(JSONObject jo) {
-		JSONObject links = (JSONObject) jo.get("_links");
-		JSONObject self = (JSONObject) links.get("self");
-		return getIdFromLink(self.get("href").toString());
-	}
-
-	private String getString(JSONObject jo, String key) {
-		if (jo == null || key == null || !jo.containsKey(key)) {
-			return null;
-		}
-
-		return jo.get(key).toString();
-
-	}
-
-	private String getIdFromLink(String link) {
-		if (link == null) {
-			return "";
-		}
-		return link.substring(link.lastIndexOf('/') + 1);
-	}
+    private String getIdFromLink(String link) {
+        if (link == null) {
+            return "";
+        }
+        return link.substring(link.lastIndexOf('/') + 1);
+    }
 }
