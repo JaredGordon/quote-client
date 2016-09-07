@@ -17,99 +17,74 @@ package cf.pivotal.quoteClient;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 public class MarketSummary {
 
-	private BigDecimal tradeStockIndexAverage;
+    private BigDecimal tradeStockIndexAverage;
 
-	private BigDecimal tradeStockIndexVolume;
+    private BigDecimal tradeStockIndexVolume;
 
-	private BigDecimal tradeStockIndexOpenAverage;
+    private BigDecimal tradeStockIndexOpenAverage;
 
-	private List<Quote> topLosers;
+    private Date summaryDate;
 
-	private List<Quote> topGainers;
+    private BigDecimal change;
 
-	private Date summaryDate;
+    private String percentGain;
 
-	private BigDecimal change;
+    BigDecimal getChange() {
+        return change;
+    }
 
-	private BigDecimal percentGain;
+    void setChange(BigDecimal change) {
+        this.change = change;
+    }
 
-	public BigDecimal getChange() {
-		return change;
-	}
+    BigDecimal getTradeStockIndexAverage() {
+        return tradeStockIndexAverage;
+    }
 
-	public void setChange(BigDecimal change) {
-		this.change = change;
-	}
+    void setTradeStockIndexAverage(BigDecimal tradeStockIndexAverage) {
+        this.tradeStockIndexAverage = tradeStockIndexAverage;
+    }
 
-	public BigDecimal getPercentGain() {
-		return percentGain;
-	}
+    BigDecimal getTradeStockIndexVolume() {
+        return tradeStockIndexVolume;
+    }
 
-	public BigDecimal getTradeStockIndexAverage() {
-		return tradeStockIndexAverage;
-	}
+    void setTradeStockIndexVolume(BigDecimal tradeStockIndexVolume) {
+        this.tradeStockIndexVolume = tradeStockIndexVolume;
+    }
 
-	public void setTradeStockIndexAverage(BigDecimal tradeStockIndexAverage) {
-		this.tradeStockIndexAverage = tradeStockIndexAverage;
-	}
+    BigDecimal getTradeStockIndexOpenAverage() {
+        return tradeStockIndexOpenAverage;
+    }
 
-	public BigDecimal getTradeStockIndexVolume() {
-		return tradeStockIndexVolume;
-	}
+    void setTradeStockIndexOpenAverage(
+            BigDecimal tradeStockIndexOpenAverage) {
+        this.tradeStockIndexOpenAverage = tradeStockIndexOpenAverage;
+    }
 
-	public void setTradeStockIndexVolume(BigDecimal tradeStockIndexVolume) {
-		this.tradeStockIndexVolume = tradeStockIndexVolume;
-	}
+    Date getSummaryDate() {
+        return summaryDate;
+    }
 
-	public BigDecimal getTradeStockIndexOpenAverage() {
-		return tradeStockIndexOpenAverage;
-	}
+    void setSummaryDate(Date summaryDate) {
+        this.summaryDate = summaryDate;
+    }
 
-	public void setTradeStockIndexOpenAverage(
-			BigDecimal tradeStockIndexOpenAverage) {
-		this.tradeStockIndexOpenAverage = tradeStockIndexOpenAverage;
-	}
+    @Override
+    public String toString() {
+        return "MarketSummary [tradeStockIndexAverage="
+                + tradeStockIndexAverage + ", tradeStockIndexVolume="
+                + tradeStockIndexVolume + ", tradeStockIndexOpenAverage="
+                + tradeStockIndexOpenAverage +
+                ", summaryDate=" + summaryDate
+                + ", percentGain=" + percentGain + "]";
+    }
 
-	public List<Quote> getTopLosers() {
-		return topLosers;
-	}
-
-	public void setTopLosers(List<Quote> topLosers) {
-		this.topLosers = topLosers;
-	}
-
-	public List<Quote> getTopGainers() {
-		return topGainers;
-	}
-
-	public void setTopGainers(List<Quote> topGainers) {
-		this.topGainers = topGainers;
-	}
-
-	public Date getSummaryDate() {
-		return summaryDate;
-	}
-
-	public void setSummaryDate(Date summaryDate) {
-		this.summaryDate = summaryDate;
-	}
-
-	@Override
-	public String toString() {
-		return "MarketSummary [tradeStockIndexAverage="
-				+ tradeStockIndexAverage + ", tradeStockIndexVolume="
-				+ tradeStockIndexVolume + ", tradeStockIndexOpenAverage="
-				+ tradeStockIndexOpenAverage + ", topLosers=" + topLosers
-				+ ", topGainers=" + topGainers + ", summaryDate=" + summaryDate
-				+ ", percentGain=" + getPercentGain() + "]";
-	}
-
-	public void setPercentGain(BigDecimal percentGain) {
-		this.percentGain = percentGain;
-	}
+    void setPercentGain(String percentGain) {
+        this.percentGain = percentGain;
+    }
 
 }

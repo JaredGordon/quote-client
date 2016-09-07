@@ -15,27 +15,9 @@
  */
 package cf.pivotal.quoteClient;
 
-import java.util.List;
-import java.util.Set;
+interface QuoteService {
 
-public interface QuoteService {
+    Quote findBySymbol(String symbol);
 
-	long countAllQuotes();
-
-	void deleteQuote(Quote quote);
-
-	List<Quote> findAllQuotes();
-
-	List<Quote> topGainers();
-
-	List<Quote> topLosers();
-
-	List<Quote> findBySymbolIn(Set<String> symbols);
-
-	Quote saveQuote(Quote quote);
-
-	Quote findBySymbol(String symbol);
-
-	MarketSummary marketSummary();
-
+    MarketSummary marketSummary();
 }
